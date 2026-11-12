@@ -35,9 +35,9 @@ body.fs .frame{box-shadow:0 0 0 2px #3b2405,0 0 60px #b45cff,0 0 120px #7a2cff88
 .wd{width:72%;aspect-ratio:1;display:grid;place-items:center;border-radius:50%;font-size:calc(var(--c)*.46);color:#ffe27a;background:radial-gradient(circle at 35% 25%,#c58bff,#6d28d9 60%,#2e0f6b);box-shadow:0 0 0 2px #ffe27a,0 3px 6px #0009}
 #msg{min-height:20px;font-size:14px;color:#ffe9a8;text-align:center;text-shadow:0 0 8px #000}
 .panel{width:100%;padding:10px;border-radius:20px;background:linear-gradient(#2a2160,#0f0a2c);box-shadow:inset 0 1px #fff3,0 0 0 2px var(--gold2),0 8px 24px #000a}
-.stats{display:grid;grid-template-columns:1.3fr 1fr 1fr;gap:6px}
+.stats{display:grid;grid-template-columns:1.3fr 1fr 1fr 1fr;gap:6px}
 .stat{background:#000;border-radius:10px;padding:4px 6px;text-align:center;box-shadow:inset 0 0 8px #000,0 0 0 1px #6b430a}
-.stat small{display:block;font-size:10px;color:#e8c36a}.stat b{font:700 18px "Courier New",monospace;color:#8dff9f;text-shadow:0 0 8px #3f9}
+.stat small{display:block;font-size:10px;color:#e8c36a}.stat b{font:700 15px "Courier New",monospace;color:#8dff9f;text-shadow:0 0 8px #3f9}
 .ctl{display:grid;grid-template-columns:1fr 104px 1fr;gap:8px;align-items:center;margin-top:10px}
 .col{display:grid;gap:8px}.bb{display:grid;grid-template-columns:1fr 1fr;gap:8px}
 .btn{border:0;border-radius:12px;padding:11px 4px;font:700 13px "Trebuchet MS",sans-serif;color:#2a1700;background:linear-gradient(#ffe59a,#e0a92f 55%,#a8741a);box-shadow:0 3px 0 #5b3a05,inset 0 1px #fff9}
@@ -64,10 +64,19 @@ body:before{content:"";position:fixed;inset:0;pointer-events:none;background:rad
 .stps{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px}
 .stp{display:grid;grid-template-columns:34px 1fr 34px;gap:4px;align-items:center;background:#000;border-radius:10px;padding:3px;text-align:center;box-shadow:inset 0 0 8px #000,0 0 0 1px #6b430a}
 .stp small{display:block;font-size:10px;color:#e8c36a}.stp b{font:700 16px "Courier New",monospace;color:#7ef3ff}.btn.sm{padding:6px 0;font-size:16px}
-#mtr{display:flex;align-items:center;justify-content:center;gap:5px;min-height:18px}
-#mtr small{margin-left:6px;font:700 12px "Courier New",monospace;color:#7ef3ff}
+#mtr{position:relative;width:100%;padding:6px 8px;border-radius:12px;text-align:center;cursor:pointer;background:linear-gradient(#2a2160,#120c33);box-shadow:inset 0 0 0 1px #6b430a}
+#mtr .mr{display:flex;align-items:center;justify-content:center;gap:5px}
+#mtr svg{width:28px;height:28px;margin-right:4px;filter:drop-shadow(0 0 5px #ffd36a)}
+#mtr b{margin-left:6px;font:700 14px "Courier New",monospace;color:#7ef3ff}
+#mtr small{display:block;margin-top:3px;font-size:10px;color:#e8c36a}
 .pip{width:11px;height:11px;transform:rotate(45deg);background:#1b1650;border:1px solid #6b430a;transition:.3s}
 .pip.on{background:linear-gradient(#e8ffff,#5aa8ff);border-color:#9fe8ff;box-shadow:0 0 8px #7ef3ff}
+.pip.new{animation:pn .6s 3}
+@keyframes pn{50%{transform:rotate(45deg) scale(1.9);background:#fff}}
+#mtr.bump{animation:bump .6s}
+@keyframes bump{40%{transform:scale(1.05);box-shadow:inset 0 0 0 1px #6b430a,0 0 20px #7ef3ff}}
+.tz{position:absolute;left:50%;top:-4px;transform:translateX(-50%);font:900 16px Georgia,serif;color:#ffe27a;text-shadow:0 0 8px #000,0 0 10px #fa0;animation:tz 1.6s forwards;pointer-events:none;white-space:nowrap}
+@keyframes tz{to{top:-34px;opacity:0}}
 #bg{position:absolute;left:3px;top:3px;width:calc(100% - 6px);height:calc(100% - 6px);display:none;grid-template:repeat(3,1fr)/repeat(5,1fr);gap:3px;z-index:4;background:#05041a;border-radius:10px}
 body.bonus #bg{display:grid}body.bonus .frame{box-shadow:0 0 0 2px #3b2405,0 0 60px #3dffd8,0 0 120px #19c3a388}
 .bc{position:relative;overflow:hidden;border-radius:6px;background:radial-gradient(#2a2380,#0b0a2b);box-shadow:inset 0 0 12px #000}
@@ -95,9 +104,9 @@ body.bonus #bg{display:grid}body.bonus .frame{box-shadow:0 0 0 2px #3b2405,0 0 6
   <div class="jp"><small>DRAGON'S HOARD</small><b id="jp">50,000</b></div></div>
  <div class="frame"><div id="fsb"></div><div class="win" id="win"></div></div>
  <div id="msg">Match 3 or more from the left on your active paylines.</div>
- <div id="mtr"></div>
+ <div id="mtr"><div id="mi"></div></div>
  <div class="panel">
-  <div class="stats"><div class="stat"><small>Balance</small><b id="bal"></b></div><div class="stat"><small>Bet</small><b id="bet"></b></div><div class="stat"><small>Win</small><b id="w">0</b></div></div>
+  <div class="stats"><div class="stat"><small>Balance</small><b id="bal"></b></div><div class="stat"><small>Bet</small><b id="bet"></b></div><div class="stat"><small>Win</small><b id="w">0</b></div><div class="stat"><small>Last win</small><b id="lw">0</b></div></div>
   <div class="stps"><div class="stp"><button class="btn sm" id="lm">−</button><span><small>Lines</small><b id="ln">10</b></span><button class="btn sm" id="lp">+</button></div><div class="stp"><button class="btn sm" id="bm">−</button><span><small>Per line</small><b id="pl">2</b></span><button class="btn sm" id="bp">+</button></div></div>
   <div class="ctl">
    <div class="col"><button class="btn" id="auto">Auto</button><button class="btn" id="turbo">Turbo</button></div>
@@ -133,7 +142,7 @@ let AC;function snd(f,d=.1,t='sine',v=.12,at=0,f2){if(mute)return;try{AC=AC||new
 const jingle=n=>[523,659,784,1047,1319,1568].slice(0,n).forEach((f,i)=>snd(f,.22,'triangle',.14,i*.09));
 const buzz=p=>navigator.vibrate&&navigator.vibrate(p);
 /* ---- ui ---- */
-function sync(){meter();$('#bal').textContent=fmt(st.bal);$('#bet').textContent=fmt(BETS[st.bi]*st.lines);$('#pl').textContent=BETS[st.bi];$('#ln').textContent=st.lines;$('#jp').textContent=fmt(st.jp);
+function sync(){meter();$('#lw').textContent=fmt(st.lw||0);$('#bal').textContent=fmt(st.bal);$('#bet').textContent=fmt(BETS[st.bi]*st.lines);$('#pl').textContent=BETS[st.bi];$('#ln').textContent=st.lines;$('#jp').textContent=fmt(st.jp);
  const s=$('#spin');s.textContent=busy?'STOP':fs?'FREE':'SPIN';s.classList.toggle('busy',busy);$('#auto').classList.toggle('on',auto);$('#turbo').classList.toggle('on',turbo);
  $('#fsb').textContent=`FREE SPINS ${fs} · WINS ×2`;document.body.classList.toggle('fs',fs>0);$('#snd').textContent=mute?'🔇':'🔊';save()}
 function foot(){const m=Math.floor((Date.now()-t0)/60000),n=st.bal-bal0;$('#foot').textContent=`Play money only · Session ${m} min · Net ${n>=0?'+':'−'}${fmt(Math.abs(n))}`}
@@ -166,7 +175,8 @@ function evalGrid(g,lb,nl,free,bet){const wins=[];let jp=false;
 const MTR=12,PZ=[.1,.1,.2,.2,.3,.5,1,2],sleep=ms=>new Promise(r=>setTimeout(r,ms));
 const fk=n=>n>=10000?Math.round(n/1000)+'k':n>=1000?(n/1000).toFixed(1)+'k':fmt(n);
 const bgEl=document.createElement('div');bgEl.id='bg';$('#win').appendChild(bgEl);
-function meter(){$('#mtr').innerHTML=Array.from({length:MTR},(_,i)=>`<i class="pip${i<(st.meter||0)?' on':''}"></i>`).join('')+`<small>${Math.min(st.meter||0,MTR)}/${MTR}</small>`}
+let lastM=0;
+function meter(){const m=Math.min(st.meter||0,MTR);$('#mi').innerHTML=`<div class="mr">${SYM.scat}${Array.from({length:MTR},(_,i)=>`<i class="pip${i<m?' on':''}${i>=lastM&&i<m?' new':''}"></i>`).join('')}<b>${m}/${MTR}</b></div><small>${m?'Land more Treasure chests to fill the vault':'Land Treasure chests to fill the vault and unlock the bonus'}</small>`;lastM=m}
 async function bonus(bet){
  busy=true;sync();clearWin();bgEl.innerHTML='';
  const L=Array(15).fill(0),cs=[],tot=()=>L.reduce((a,b)=>a+b,0);
@@ -191,7 +201,7 @@ async function bonus(bet){
  $('#msg').textContent=`${n} of 15 treasures claimed`;
  const pr=ov(`<div class="bt">${full?'GRAND TREASURE':'VAULT CLOSED'}</div><p>${n} of 15 treasures claimed${full?' · matrix complete, +50× bet':''}</p><div class="bn" id="roll">0</div>`,'Collect');
  roll($('#roll'),t,1500,true);jingle(6);coins(full?120:50,true);await pr;
- st.bal+=t;st.meter=0;document.body.classList.remove('bonus');bgEl.innerHTML='';$('#w').textContent=fmt(t);busy=false;sync()}
+ st.bal+=t;if(t>0)st.lw=t;st.meter=0;document.body.classList.remove('bonus');bgEl.innerHTML='';$('#w').textContent=fmt(t);busy=false;sync()}
 /* ---- spin ---- */
 async function spin(){
  if(busy){slam=true;reels.forEach(r=>r.fin&&r.fin());return}
@@ -203,8 +213,9 @@ async function spin(){
   return spinReel(i,f,i*(turbo?40:110),(turbo?420:850)+i*(turbo?90:240)+(ant?(i-1)*500:0),ant)}));
  grid=fin;const ev=evalGrid(fin,lb,nl,free,bet);let tot=0,trig=false;
  ev.wins.forEach(w=>{tot+=w.pay;if(w.scat)trig=true});if(free)tot*=2;if(ev.jp){tot=ev.wins.reduce((a,w)=>a+w.pay,0);st.jp=JP0}
- st.bal+=tot;if(free)fsWin+=tot;st.meter=(st.meter||0)+ev.sc;
+ st.bal+=tot;if(tot>0)st.lw=tot;if(free)fsWin+=tot;st.meter=(st.meter||0)+ev.sc;
  busy=false;sync();
+ if(ev.sc){const m=$('#mtr');m.classList.remove('bump');void m.offsetWidth;m.classList.add('bump');const tz=document.createElement('span');tz.className='tz';tz.textContent=`+${ev.sc} Treasure`;m.appendChild(tz);setTimeout(()=>tz.remove(),1700)}
  let big=false;
  if(tot>0){const ratio=tot/bet,tier=ev.jp?"DRAGON'S HOARD":ratio>=40?'LEGENDARY WIN':ratio>=15?'EPIC WIN':ratio>=6?'HEROIC WIN':'';
   roll($('#w'),tot,tier?1800:700,true);jingle(tier?6:ratio>=2?4:2);buzz(tier?[60,40,60,40,120]:30);coins(tier?90:14,!!tier);
@@ -234,6 +245,7 @@ $('#bp').onclick=()=>{if(!busy&&st.bi<BETS.length-1){st.bi++;snd(700,.05,'square
 $('#bm').onclick=()=>{if(!busy&&st.bi>0){st.bi--;snd(500,.05,'square',.05);sync()}};
 $('#max').onclick=()=>{if(!busy){st.bi=BETS.length-1;st.lines=20;snd(900,.1,'square',.06);sync();flash()}};
 $('#show').onclick=()=>{if(!busy)drawL(allL(),1800)};
+$('#mtr').onclick=()=>{if(!busy)ov(`<div class="bt">TREASURE VAULT</div><p>Every Treasure chest that lands anywhere on the reels fills one gem.<br>Fill all ${MTR} to open the vault: treasures lock in place while the rest spin, and every spin locks more.</p>`,'Got it')};
 addEventListener('keydown',e=>{if(e.code==='Space'){e.preventDefault();spin()}});
 setInterval(()=>{if(!busy){st.jp+=Math.ceil(Math.random()*3);$('#jp').textContent=fmt(st.jp)}},1500);
 if('serviceWorker'in navigator)navigator.serviceWorker.register('sw.js').catch(()=>{});
