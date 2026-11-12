@@ -64,6 +64,19 @@ body:before{content:"";position:fixed;inset:0;pointer-events:none;background:rad
 .stps{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px}
 .stp{display:grid;grid-template-columns:34px 1fr 34px;gap:4px;align-items:center;background:#000;border-radius:10px;padding:3px;text-align:center;box-shadow:inset 0 0 8px #000,0 0 0 1px #6b430a}
 .stp small{display:block;font-size:10px;color:#e8c36a}.stp b{font:700 16px "Courier New",monospace;color:#7ef3ff}.btn.sm{padding:6px 0;font-size:16px}
+#mtr{display:flex;align-items:center;justify-content:center;gap:5px;min-height:18px}
+#mtr small{margin-left:6px;font:700 12px "Courier New",monospace;color:#7ef3ff}
+.pip{width:11px;height:11px;transform:rotate(45deg);background:#1b1650;border:1px solid #6b430a;transition:.3s}
+.pip.on{background:linear-gradient(#e8ffff,#5aa8ff);border-color:#9fe8ff;box-shadow:0 0 8px #7ef3ff}
+#bg{position:absolute;left:3px;top:3px;width:calc(100% - 6px);height:calc(100% - 6px);display:none;grid-template:repeat(3,1fr)/repeat(5,1fr);gap:3px;z-index:4;background:#05041a;border-radius:10px}
+body.bonus #bg{display:grid}body.bonus .frame{box-shadow:0 0 0 2px #3b2405,0 0 60px #3dffd8,0 0 120px #19c3a388}
+.bc{position:relative;overflow:hidden;border-radius:6px;background:radial-gradient(#2a2380,#0b0a2b);box-shadow:inset 0 0 12px #000}
+.bc.lk{background:radial-gradient(circle,#5a4fd0,#1f1858);box-shadow:inset 0 0 0 2px #7ef3ff,0 0 10px #3dffd8;animation:lk .5s cubic-bezier(.2,1.6,.4,1)}
+@keyframes lk{from{transform:scale(.4)}}
+.bc .gem{display:grid;place-items:center;height:100%}.bc .gem svg{width:78%;height:78%;margin-top:-10%;filter:drop-shadow(0 0 8px #7ef3ff)}
+.bc .pv{position:absolute;left:0;right:0;bottom:6%;text-align:center;font:900 calc(var(--c)*.25) "Courier New",monospace;color:#fff;text-shadow:0 0 4px #000,0 0 6px #000,0 0 8px #3dffd8}
+.bc.sp .rl{animation:rl .4s linear infinite;filter:blur(2px)}
+@keyframes rl{to{transform:translateY(-50%)}}
 @media(prefers-reduced-motion:reduce){*{animation:none!important}}
 </style></head><body>
 <svg width="0" height="0" style="position:absolute"><defs>
@@ -82,6 +95,7 @@ body:before{content:"";position:fixed;inset:0;pointer-events:none;background:rad
   <div class="jp"><small>DRAGON'S HOARD</small><b id="jp">50,000</b></div></div>
  <div class="frame"><div id="fsb"></div><div class="win" id="win"></div></div>
  <div id="msg">Match 3 or more from the left on your active paylines.</div>
+ <div id="mtr"></div>
  <div class="panel">
   <div class="stats"><div class="stat"><small>Balance</small><b id="bal"></b></div><div class="stat"><small>Bet</small><b id="bet"></b></div><div class="stat"><small>Win</small><b id="w">0</b></div></div>
   <div class="stps"><div class="stp"><button class="btn sm" id="lm">−</button><span><small>Lines</small><b id="ln">10</b></span><button class="btn sm" id="lp">+</button></div><div class="stp"><button class="btn sm" id="bm">−</button><span><small>Per line</small><b id="pl">2</b></span><button class="btn sm" id="bp">+</button></div></div>
@@ -95,13 +109,13 @@ body:before{content:"";position:fixed;inset:0;pointer-events:none;background:rad
 <canvas id="fx"></canvas><div id="ov"></div>
 <script>
 const $=s=>document.querySelector(s),fmt=n=>Math.round(n).toLocaleString();
-const SYM={drag:'<svg viewBox="0 0 64 64"><path d="M32 4C46 14 54 30 54 40a22 22 0 0 1-44 0C10 30 18 14 32 4Z" fill="url(#gd)" stroke="#ffd36a" stroke-width="2.5"/><path d="M18 36q7 6 14 0q7 6 14 0M20 46q6 6 12 0q6 6 12 0M24 26q8 6 16 0" fill="none" stroke="#ffb066" stroke-opacity=".6" stroke-width="2"/><path d="M30 12l4 10-5 6 6 8" stroke="#ffe27a" stroke-width="2.5" fill="none" stroke-linecap="round"/></svg>',orb:'<svg viewBox="0 0 64 64"><circle cx="32" cy="28" r="22" fill="url(#go)" stroke="#9fe8ff" stroke-width="2"/><path d="M18 30q8-12 20-6t8 14" stroke="#fff" stroke-opacity=".5" fill="none" stroke-width="2.5"/><ellipse cx="24" cy="18" rx="7" ry="4" fill="#fff" fill-opacity=".6" transform="rotate(-30 24 18)"/><path d="M16 52q16-10 32 0l-4 8H20Z" fill="url(#gg)" stroke="#6b430a" stroke-width="1.5"/></svg>',sword:'<svg viewBox="0 0 64 64"><path d="M32 2l6 9v29H26V11Z" fill="url(#gs)" stroke="#e8f4ff" stroke-width="1.5"/><path d="M32 6v32" stroke="#7488b0" stroke-width="2"/><path d="M14 40h36l-4 6H18Z" fill="url(#gg)" stroke="#6b430a" stroke-width="1.5"/><rect x="29" y="46" width="6" height="10" fill="url(#gb)"/><circle cx="32" cy="59" r="4" fill="url(#gg)"/><circle cx="32" cy="43" r="2.5" fill="#ff4a6e"/></svg>',potion:'<svg viewBox="0 0 64 64"><rect x="26" y="4" width="12" height="8" rx="2" fill="url(#gb)"/><path d="M27 12h10v12l15 26a7 7 0 0 1-6 11H18a7 7 0 0 1-6-11l15-26Z" fill="#cfeaff" fill-opacity=".25" stroke="#bfe6ff" stroke-width="2.5"/><path d="M20 40h24l8 14a7 7 0 0 1-6 7H18a7 7 0 0 1-6-7Z" fill="url(#ge)"/><circle cx="28" cy="50" r="2.5" fill="#fff" fill-opacity=".7"/><circle cx="37" cy="46" r="1.8" fill="#fff" fill-opacity=".7"/></svg>',book:'<svg viewBox="0 0 64 64"><rect x="12" y="6" width="40" height="52" rx="4" fill="url(#gp)" stroke="#ffd36a" stroke-width="2.5"/><path d="M52 10v44" stroke="#f3e7c0" stroke-width="3"/><path d="M32 16l3 7 7.5.7-5.6 5 1.7 7.4-6.6-3.9-6.6 3.9 1.7-7.4-5.6-5 7.5-.7Z" fill="url(#gg)"/><path d="M12 12h6M12 52h6" stroke="#ffd36a" stroke-width="3"/></svg>',rune:'<svg viewBox="0 0 64 64"><path d="M32 4l22 12v32L32 60 10 48V16Z" fill="url(#gk)" stroke="#9fb4d8" stroke-width="2.5"/><path d="M26 18v28M26 24l14 8-14 8" stroke="#7ef3ff" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round" fill="none" style="filter:drop-shadow(0 0 5px #3df)"/></svg>',wild:'<svg viewBox="0 0 64 64"><circle cx="32" cy="32" r="30" fill="url(#gw)"/><path d="M32 4l15 38H17Z" fill="url(#gp)" stroke="#ffd36a" stroke-width="2"/><ellipse cx="32" cy="44" rx="25" ry="7" fill="#3b1a7a" stroke="#ffd36a" stroke-width="2"/><path d="M19 38q13 5 26 0v4q-13 5-26 0Z" fill="url(#gg)"/><path d="M32 14l2.4 5 5.4.6-4 3.8 1 5.4-4.8-2.7-4.8 2.7 1-5.4-4-3.8 5.4-.6Z" fill="url(#gg)"/><text x="32" y="61" font-size="11" font-weight="900" text-anchor="middle" fill="#ffe27a" stroke="#2a1060" stroke-width="3" paint-order="stroke" font-family="Georgia,serif">WILD</text></svg>',scat:'<svg viewBox="0 0 64 64"><path d="M32 0l5 14H27ZM8 10l13 8-4 4ZM56 10L43 18l4 4Z" fill="#ffe27a" fill-opacity=".85"/><path d="M8 30a24 14 0 0 1 48 0Z" fill="url(#gb)" stroke="#ffd36a" stroke-width="2.5"/><rect x="8" y="30" width="48" height="22" rx="3" fill="url(#gb)" stroke="#ffd36a" stroke-width="2.5"/><path d="M8 38h48" stroke="#ffd36a" stroke-width="3"/><rect x="27" y="33" width="10" height="12" rx="2" fill="url(#gg)" stroke="#6b430a"/><text x="32" y="62" font-size="10" font-weight="900" text-anchor="middle" fill="#ffe27a" stroke="#2a1060" stroke-width="3" paint-order="stroke" font-family="Georgia,serif">BONUS</text></svg>'};
-const NAME={drag:'Dragon Egg',orb:'Crystal Orb',sword:'Moon Blade',potion:'Elixir',book:'Spellbook',rune:'Rune Stone',wild:'Wizard',scat:'Treasure'};
+const SYM={drag:'<svg viewBox="0 0 64 64"><path d="M32 4C46 14 54 30 54 40a22 22 0 0 1-44 0C10 30 18 14 32 4Z" fill="url(#gd)" stroke="#ffd36a" stroke-width="2.5"/><path d="M18 36q7 6 14 0q7 6 14 0M20 46q6 6 12 0q6 6 12 0M24 26q8 6 16 0" fill="none" stroke="#ffb066" stroke-opacity=".6" stroke-width="2"/><path d="M30 12l4 10-5 6 6 8" stroke="#ffe27a" stroke-width="2.5" fill="none" stroke-linecap="round"/></svg>',orb:'<svg viewBox="0 0 64 64"><circle cx="32" cy="28" r="22" fill="url(#go)" stroke="#9fe8ff" stroke-width="2"/><path d="M18 30q8-12 20-6t8 14" stroke="#fff" stroke-opacity=".5" fill="none" stroke-width="2.5"/><ellipse cx="24" cy="18" rx="7" ry="4" fill="#fff" fill-opacity=".6" transform="rotate(-30 24 18)"/><path d="M16 52q16-10 32 0l-4 8H20Z" fill="url(#gg)" stroke="#6b430a" stroke-width="1.5"/></svg>',sword:'<svg viewBox="0 0 64 64"><path d="M32 2l6 9v29H26V11Z" fill="url(#gs)" stroke="#e8f4ff" stroke-width="1.5"/><path d="M32 6v32" stroke="#7488b0" stroke-width="2"/><path d="M14 40h36l-4 6H18Z" fill="url(#gg)" stroke="#6b430a" stroke-width="1.5"/><rect x="29" y="46" width="6" height="10" fill="url(#gb)"/><circle cx="32" cy="59" r="4" fill="url(#gg)"/><circle cx="32" cy="43" r="2.5" fill="#ff4a6e"/></svg>',potion:'<svg viewBox="0 0 64 64"><rect x="26" y="4" width="12" height="8" rx="2" fill="url(#gb)"/><path d="M27 12h10v12l15 26a7 7 0 0 1-6 11H18a7 7 0 0 1-6-11l15-26Z" fill="#cfeaff" fill-opacity=".25" stroke="#bfe6ff" stroke-width="2.5"/><path d="M20 40h24l8 14a7 7 0 0 1-6 7H18a7 7 0 0 1-6-7Z" fill="url(#ge)"/><circle cx="28" cy="50" r="2.5" fill="#fff" fill-opacity=".7"/><circle cx="37" cy="46" r="1.8" fill="#fff" fill-opacity=".7"/></svg>',book:'<svg viewBox="0 0 64 64"><rect x="12" y="6" width="40" height="52" rx="4" fill="url(#gp)" stroke="#ffd36a" stroke-width="2.5"/><path d="M52 10v44" stroke="#f3e7c0" stroke-width="3"/><path d="M32 16l3 7 7.5.7-5.6 5 1.7 7.4-6.6-3.9-6.6 3.9 1.7-7.4-5.6-5 7.5-.7Z" fill="url(#gg)"/><path d="M12 12h6M12 52h6" stroke="#ffd36a" stroke-width="3"/></svg>',rune:'<svg viewBox="0 0 64 64"><path d="M32 4l22 12v32L32 60 10 48V16Z" fill="url(#gk)" stroke="#9fb4d8" stroke-width="2.5"/><path d="M26 18v28M26 24l14 8-14 8" stroke="#7ef3ff" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round" fill="none" style="filter:drop-shadow(0 0 5px #3df)"/></svg>',wild:'<svg viewBox="0 0 64 64"><circle cx="32" cy="32" r="30" fill="url(#gw)"/><path d="M32 4l15 38H17Z" fill="url(#gp)" stroke="#ffd36a" stroke-width="2"/><ellipse cx="32" cy="44" rx="25" ry="7" fill="#3b1a7a" stroke="#ffd36a" stroke-width="2"/><path d="M19 38q13 5 26 0v4q-13 5-26 0Z" fill="url(#gg)"/><path d="M32 14l2.4 5 5.4.6-4 3.8 1 5.4-4.8-2.7-4.8 2.7 1-5.4-4-3.8 5.4-.6Z" fill="url(#gg)"/><text x="32" y="61" font-size="11" font-weight="900" text-anchor="middle" fill="#ffe27a" stroke="#2a1060" stroke-width="3" paint-order="stroke" font-family="Georgia,serif">WILD</text></svg>',gem:'<svg viewBox="0 0 64 64"><path d="M32 4l20 14-8 38H20L12 18Z" fill="url(#go)" stroke="#9fe8ff" stroke-width="2"/><path d="M12 18h40M32 4l-8 14 8 38 8-38Z" fill="none" stroke="#e8ffff" stroke-opacity=".6" stroke-width="1.5"/></svg>',scat:'<svg viewBox="0 0 64 64"><path d="M32 0l5 14H27ZM8 10l13 8-4 4ZM56 10L43 18l4 4Z" fill="#ffe27a" fill-opacity=".85"/><path d="M8 30a24 14 0 0 1 48 0Z" fill="url(#gb)" stroke="#ffd36a" stroke-width="2.5"/><rect x="8" y="30" width="48" height="22" rx="3" fill="url(#gb)" stroke="#ffd36a" stroke-width="2.5"/><path d="M8 38h48" stroke="#ffd36a" stroke-width="3"/><rect x="27" y="33" width="10" height="12" rx="2" fill="url(#gg)" stroke="#6b430a"/><text x="32" y="62" font-size="10" font-weight="900" text-anchor="middle" fill="#ffe27a" stroke="#2a1060" stroke-width="3" paint-order="stroke" font-family="Georgia,serif">BONUS</text></svg>'};
+const NAME0=0;const NAME={drag:'Dragon Egg',orb:'Crystal Orb',sword:'Moon Blade',potion:'Elixir',book:'Spellbook',rune:'Rune Stone',wild:'Wizard',scat:'Treasure'};
 const WT={rune:22,book:20,potion:18,sword:13,orb:9,drag:6,wild:5,scat:5};            // reel weights (tune RTP here)
 const PAY={drag:[20,100,500],orb:[10,50,200],sword:[6,25,100],potion:[4,15,50],book:[3,12,40],rune:[2,8,25]}; // x line bet for 3/4/5
 const LN=[[1,1,1,1,1],[0,0,0,0,0],[2,2,2,2,2],[0,1,2,1,0],[2,1,0,1,2],[0,0,1,0,0],[2,2,1,2,2],[1,0,0,0,1],[1,2,2,2,1],[0,1,1,1,0],[2,1,1,1,2],[1,0,1,0,1],[1,2,1,2,1],[0,1,0,1,0],[2,1,2,1,2],[1,1,0,1,1],[1,1,2,1,1],[0,0,2,0,0],[2,2,0,2,2],[0,2,2,2,0]];
 const BETS=[1,2,5,10,20,50,100],LINES=[1,3,5,10,15,20],JP0=50000; // BETS = bet per line
-let st={bal:10000,bi:1,lines:10,jp:JP0,streak:0,last:''};
+let st={bal:10000,bi:1,lines:10,jp:JP0,meter:0,streak:0,last:''};
 try{Object.assign(st,JSON.parse(localStorage.getItem('gs7')||'{}'))}catch(e){}
 const save=()=>{try{localStorage.setItem('gs7',JSON.stringify(st))}catch(e){}};
 const t0=Date.now(),bal0=st.bal;
@@ -119,7 +133,7 @@ let AC;function snd(f,d=.1,t='sine',v=.12,at=0,f2){if(mute)return;try{AC=AC||new
 const jingle=n=>[523,659,784,1047,1319,1568].slice(0,n).forEach((f,i)=>snd(f,.22,'triangle',.14,i*.09));
 const buzz=p=>navigator.vibrate&&navigator.vibrate(p);
 /* ---- ui ---- */
-function sync(){$('#bal').textContent=fmt(st.bal);$('#bet').textContent=fmt(BETS[st.bi]*st.lines);$('#pl').textContent=BETS[st.bi];$('#ln').textContent=st.lines;$('#jp').textContent=fmt(st.jp);
+function sync(){meter();$('#bal').textContent=fmt(st.bal);$('#bet').textContent=fmt(BETS[st.bi]*st.lines);$('#pl').textContent=BETS[st.bi];$('#ln').textContent=st.lines;$('#jp').textContent=fmt(st.jp);
  const s=$('#spin');s.textContent=busy?'STOP':fs?'FREE':'SPIN';s.classList.toggle('busy',busy);$('#auto').classList.toggle('on',auto);$('#turbo').classList.toggle('on',turbo);
  $('#fsb').textContent=`FREE SPINS ${fs} · WINS ×2`;document.body.classList.toggle('fs',fs>0);$('#snd').textContent=mute?'🔇':'🔊';save()}
 function foot(){const m=Math.floor((Date.now()-t0)/60000),n=st.bal-bal0;$('#foot').textContent=`Play money only · Session ${m} min · Net ${n>=0?'+':'−'}${fmt(Math.abs(n))}`}
@@ -146,8 +160,38 @@ function evalGrid(g,lb,nl,free,bet){const wins=[];let jp=false;
  LN.slice(0,nl).forEach((ln,li)=>{const cs=ln.map((row,c)=>g[c][row]),b=cs[0];if(b==='scat')return;let n=1;for(let c=1;c<5;c++){if(cs[c]===b||cs[c]==='wild')n++;else break}
   if(n>=3){let p=PAY[b][n-3]*lb;if(b==='drag'&&n===5){p=Math.max(p,st.jp);jp=true}wins.push({li,pay:p,txt:`Line ${li+1}: ${n} × ${NAME[b]} pays ${fmt(p*(free&&!jp?2:1))}`,cells:ln.slice(0,n).map((row,c)=>[c,row])})}});
  const sp=[];g.forEach((col,c)=>col.forEach((k,r)=>k==='scat'&&sp.push([c,r])));
- if(sp.length>=3)wins.push({pay:[0,0,0,2,10,50][Math.min(sp.length,5)]*bet,txt:`${sp.length} × Treasure · 10 free spins!`,cells:sp,scat:true});
+ if(sp.length>=3)wins.push({pay:[0,0,0,2,10,50][Math.min(sp.length,5)]*bet,txt:`${sp.length} × Treasure pays ${fmt([0,0,0,2,10,50][Math.min(sp.length,5)]*bet)}`,cells:sp,scat:true});
  return{wins,jp,sc:sp.length}}
+/* ---- treasure vault bonus ---- */
+const MTR=12,PZ=[.1,.1,.2,.2,.3,.5,1,2],sleep=ms=>new Promise(r=>setTimeout(r,ms));
+const fk=n=>n>=10000?Math.round(n/1000)+'k':n>=1000?(n/1000).toFixed(1)+'k':fmt(n);
+const bgEl=document.createElement('div');bgEl.id='bg';$('#win').appendChild(bgEl);
+function meter(){$('#mtr').innerHTML=Array.from({length:MTR},(_,i)=>`<i class="pip${i<(st.meter||0)?' on':''}"></i>`).join('')+`<small>${Math.min(st.meter||0,MTR)}/${MTR}</small>`}
+async function bonus(bet){
+ busy=true;sync();clearWin();bgEl.innerHTML='';
+ const L=Array(15).fill(0),cs=[],tot=()=>L.reduce((a,b)=>a+b,0);
+ for(let i=0;i<15;i++){const d=document.createElement('div');d.className='bc';bgEl.appendChild(d);cs.push(d)}
+ const lock=i=>{L[i]=Math.max(1,Math.round(PZ[Math.random()*PZ.length|0]*bet));cs[i].className='bc lk';cs[i].innerHTML=`<div class="gem">${SYM.gem}</div><b class="pv">${fk(L[i])}</b>`};
+ const spinning=i=>{const l=[0,1,2,3].map(()=>cellsHTML([pick(2)])).join('');cs[i].className='bc sp';cs[i].innerHTML=`<div class="rl">${l+l}</div>`};
+ jingle(6);coins(40,true);
+ await ov(`<div class="bt">TREASURE VAULT</div><p>Locked treasures stay put while the rest spin.<br>Every spin locks more. Fill all 15 for the Grand Treasure.</p>`,'Enter the vault');
+ document.body.classList.add('bonus');
+ const first=[...Array(15).keys()].sort(()=>Math.random()-.5).slice(0,3);first.forEach(lock);snd(660,.2,'triangle',.15);$('#w').textContent=fmt(tot());
+ await sleep(900);
+ for(let n=1;n<=8&&L.includes(0);n++){
+  const emp=L.map((v,i)=>v?-1:i).filter(i=>i>=0);
+  $('#msg').textContent=`Spin ${n} of 8 · ${15-emp.length} of 15 locked`;
+  emp.forEach(spinning);snd(300,.5,'sawtooth',.05,0,900);
+  await sleep(turbo?450:1100);
+  let hit=emp.filter(()=>Math.random()<.12);if(!hit.length)hit=[emp[Math.random()*emp.length|0]];
+  for(const i of emp.sort((a,b)=>a%5-b%5||a-b)){await sleep(turbo?40:110);
+   if(hit.includes(i)){lock(i);snd(700+L.filter(x=>x).length*40,.18,'triangle',.14);buzz(20)}else{cs[i].className='bc';cs[i].innerHTML='';snd(140,.1,'triangle',.18,0,60)}}
+  $('#w').textContent=fmt(tot());await sleep(turbo?300:750)}
+ const full=!L.includes(0),n=L.filter(x=>x).length;let t=tot();if(full)t+=50*bet;
+ $('#msg').textContent=`${n} of 15 treasures claimed`;
+ const pr=ov(`<div class="bt">${full?'GRAND TREASURE':'VAULT CLOSED'}</div><p>${n} of 15 treasures claimed${full?' · matrix complete, +50× bet':''}</p><div class="bn" id="roll">0</div>`,'Collect');
+ roll($('#roll'),t,1500,true);jingle(6);coins(full?120:50,true);await pr;
+ st.bal+=t;st.meter=0;document.body.classList.remove('bonus');bgEl.innerHTML='';$('#w').textContent=fmt(t);busy=false;sync()}
 /* ---- spin ---- */
 async function spin(){
  if(busy){slam=true;reels.forEach(r=>r.fin&&r.fin());return}
@@ -159,7 +203,7 @@ async function spin(){
   return spinReel(i,f,i*(turbo?40:110),(turbo?420:850)+i*(turbo?90:240)+(ant?(i-1)*500:0),ant)}));
  grid=fin;const ev=evalGrid(fin,lb,nl,free,bet);let tot=0,trig=false;
  ev.wins.forEach(w=>{tot+=w.pay;if(w.scat)trig=true});if(free)tot*=2;if(ev.jp){tot=ev.wins.reduce((a,w)=>a+w.pay,0);st.jp=JP0}
- st.bal+=tot;if(free)fsWin+=tot;if(trig){fs+=10;}
+ st.bal+=tot;if(free)fsWin+=tot;st.meter=(st.meter||0)+ev.sc;
  busy=false;sync();
  let big=false;
  if(tot>0){const ratio=tot/bet,tier=ev.jp?"DRAGON'S HOARD":ratio>=40?'LEGENDARY WIN':ratio>=15?'EPIC WIN':ratio>=6?'HEROIC WIN':'';
@@ -168,8 +212,8 @@ async function spin(){
   if(ev.wins.length>1)setTimeout(()=>{show();cyc=setInterval(show,1300)},900);else{$('#msg').textContent=ev.wins[0].txt}
   if(tier){big=true;const pr=ov(`<div class="bt">${tier}</div><div class="bn" id="roll">0</div>`,'',ev.jp?5200:3600);roll($('#roll'),tot,1800,true);await pr}
  }
- else $('#msg').textContent=free?'No win. Next free spin…':'No win. Spin again!';
- if(trig){await ov(`<div class="bt">FREE SPINS</div><p>The treasure vault opens: 10 free spins, every win pays ×2</p>`,'Start');}
+ else $('#msg').textContent=ev.sc?`Treasure +${ev.sc} · ${Math.min(st.meter,MTR)}/${MTR} collected`:'No win. Spin again!';
+ if((st.meter||0)>=MTR){await bonus(bet)}
  sync();
  if(fs>0)setTimeout(spin,big?600:1300);
  else{if(free&&fsWin>0){const w=fsWin;fsWin=0;await ov(`<div class="bt">FEATURE OVER</div><p>Free spins paid</p><div class="bn">${fmt(w)}</div>`,'Collect')}

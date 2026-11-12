@@ -34,7 +34,8 @@ If you change any file after deploying, bump `C` in `sw.js` (for example `gs7-v2
 - 5 reels by 3 rows with up to 20 paylines. Wins pay left to right from reel 1 (3, 4 or 5 of a kind) on every active line.
 - Choose how many lines to play (1, 3, 5, 10, 15, 20) and the bet per line. Total bet = lines x bet per line. Tap Paylines to see the active line shapes.
 - Wizard wild appears on reels 2-4 and substitutes for everything except the treasure scatter.
-- 3 or more treasure scatters anywhere pay a bonus on the total bet and award 10 free spins with all wins doubled.
+- Treasure scatters pay on 3 or more (multiples of total bet) and every treasure that lands also fills the 12-gem Treasure meter. The meter is saved between sessions.
+- When the meter is full the Treasure Vault opens: a 5x3 bonus matrix starts with 3 locked treasures, each worth a prize. Locked treasures stay still while the other cells spin, and every spin locks at least one more (8 spins). Fill all 15 for the Grand Treasure (+50x total bet).
 - 5 dragon eggs on an active payline pays the Dragon's Hoard jackpot.
 - Tap SPIN while the reels are moving to slam-stop them. Space bar also spins.
 - Auto, Turbo, Max bet (20 lines at the top bet), sound toggle, and a daily bonus with a streak.
@@ -49,6 +50,7 @@ Everything is near the top of the `<script>` in `index.html`:
 - `LN` - the 20 payline shapes (row index per reel)
 - `BETS` - selectable bet per line, `LINES` - selectable line counts
 - `JP0` - jackpot reset value
+- `MTR` - treasures needed to open the vault, `PZ` - treasure prize multipliers (of total bet), and the lock chance (`.12`) and spin count (`8`) inside `bonus()`
 
 The payout rate has not been simulated. After changing `WT` or `PAY`, run a few thousand automated spins to check the return before you rely on the feel.
 
