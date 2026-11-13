@@ -98,6 +98,10 @@ body.bonus #bg{display:grid}body.bonus .frame{box-shadow:0 0 0 2px #3b2405,0 0 6
 .sym.pop{animation:pop2 .6s}@keyframes pop2{40%{transform:scale(1.45);filter:brightness(2.2)}}
 #cm{position:absolute;right:10px;top:-16px;z-index:5;display:none;font:900 16px Georgia,serif;color:#fff;background:linear-gradient(#ff8a3d,#c4170a);padding:2px 12px;border-radius:12px;box-shadow:0 0 0 2px #ffd36a,0 0 14px #ff7a3d;animation:pn2 .5s}
 @keyframes pn2{from{transform:scale(1.7)}}
+#ban{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);z-index:6;pointer-events:none;opacity:0;white-space:nowrap;font:900 italic 28px Georgia,serif;color:#fff6c8;text-shadow:0 0 14px #b57bff,0 0 26px #7ef3ff,0 3px 0 #2a1060}
+#ban.on{animation:ban 1.5s}@keyframes ban{0%{opacity:0;transform:translate(-50%,-50%) scale(.4)}20%{opacity:1;transform:translate(-50%,-50%) scale(1.15)}80%{opacity:1;transform:translate(-50%,-50%) scale(1)}100%{opacity:0;transform:translate(-50%,-50%) scale(1.25)}}
+.reel.wx{box-shadow:0 0 0 3px #c58bff,0 0 26px 8px #7a2cff;z-index:2}
+#inf{position:absolute;left:10px;top:16px;width:24px;height:24px;border-radius:50%;border:1.5px solid #ffd36a;background:none;color:#ffd36a;font:700 14px Georgia,serif;padding:0}
 @media(prefers-reduced-motion:reduce){*{animation:none!important}}
 </style></head><body>
 <svg width="0" height="0" style="position:absolute"><defs>
@@ -112,9 +116,9 @@ body.bonus #bg{display:grid}body.bonus .frame{box-shadow:0 0 0 2px #3b2405,0 0 6
 <radialGradient id="gw"><stop offset="0" stop-color="#ffe27a" stop-opacity=".55"/><stop offset="1" stop-color="#ffe27a" stop-opacity="0"/></radialGradient>
 </defs></svg>
 <div id="app">
- <div class="marq"><button id="snd" aria-label="Sound">🔊</button><h1>✦ ARCANE QUEST ✦</h1>
+ <div class="marq"><button id="inf" aria-label="Features">?</button><button id="snd" aria-label="Sound">🔊</button><h1>✦ ARCANE QUEST ✦</h1>
   <div class="jp"><small>DRAGON'S HOARD</small><b id="jp">50,000</b></div></div>
- <div class="frame"><div id="fsb"></div><div id="cm"></div><div class="win" id="win"></div></div>
+ <div class="frame"><div id="fsb"></div><div id="cm"></div><div id="ban"></div><div class="win" id="win"></div></div>
  <div id="msg">Match 3 or more from the left on your active paylines.</div>
  <div id="mtr"><div id="mi"></div></div>
  <div class="panel">
@@ -132,14 +136,15 @@ body.bonus #bg{display:grid}body.bonus .frame{box-shadow:0 0 0 2px #3b2405,0 0 6
 const $=s=>document.querySelector(s),fmt=n=>Math.round(n).toLocaleString();
 const SYM={drag:'<svg viewBox="0 0 64 64"><path d="M32 4C46 14 54 30 54 40a22 22 0 0 1-44 0C10 30 18 14 32 4Z" fill="url(#gd)" stroke="#ffd36a" stroke-width="2.5"/><path d="M18 36q7 6 14 0q7 6 14 0M20 46q6 6 12 0q6 6 12 0M24 26q8 6 16 0" fill="none" stroke="#ffb066" stroke-opacity=".6" stroke-width="2"/><path d="M30 12l4 10-5 6 6 8" stroke="#ffe27a" stroke-width="2.5" fill="none" stroke-linecap="round"/></svg>',orb:'<svg viewBox="0 0 64 64"><circle cx="32" cy="28" r="22" fill="url(#go)" stroke="#9fe8ff" stroke-width="2"/><path d="M18 30q8-12 20-6t8 14" stroke="#fff" stroke-opacity=".5" fill="none" stroke-width="2.5"/><ellipse cx="24" cy="18" rx="7" ry="4" fill="#fff" fill-opacity=".6" transform="rotate(-30 24 18)"/><path d="M16 52q16-10 32 0l-4 8H20Z" fill="url(#gg)" stroke="#6b430a" stroke-width="1.5"/></svg>',sword:'<svg viewBox="0 0 64 64"><path d="M32 2l6 9v29H26V11Z" fill="url(#gs)" stroke="#e8f4ff" stroke-width="1.5"/><path d="M32 6v32" stroke="#7488b0" stroke-width="2"/><path d="M14 40h36l-4 6H18Z" fill="url(#gg)" stroke="#6b430a" stroke-width="1.5"/><rect x="29" y="46" width="6" height="10" fill="url(#gb)"/><circle cx="32" cy="59" r="4" fill="url(#gg)"/><circle cx="32" cy="43" r="2.5" fill="#ff4a6e"/></svg>',potion:'<svg viewBox="0 0 64 64"><rect x="26" y="4" width="12" height="8" rx="2" fill="url(#gb)"/><path d="M27 12h10v12l15 26a7 7 0 0 1-6 11H18a7 7 0 0 1-6-11l15-26Z" fill="#cfeaff" fill-opacity=".25" stroke="#bfe6ff" stroke-width="2.5"/><path d="M20 40h24l8 14a7 7 0 0 1-6 7H18a7 7 0 0 1-6-7Z" fill="url(#ge)"/><circle cx="28" cy="50" r="2.5" fill="#fff" fill-opacity=".7"/><circle cx="37" cy="46" r="1.8" fill="#fff" fill-opacity=".7"/></svg>',book:'<svg viewBox="0 0 64 64"><rect x="12" y="6" width="40" height="52" rx="4" fill="url(#gp)" stroke="#ffd36a" stroke-width="2.5"/><path d="M52 10v44" stroke="#f3e7c0" stroke-width="3"/><path d="M32 16l3 7 7.5.7-5.6 5 1.7 7.4-6.6-3.9-6.6 3.9 1.7-7.4-5.6-5 7.5-.7Z" fill="url(#gg)"/><path d="M12 12h6M12 52h6" stroke="#ffd36a" stroke-width="3"/></svg>',rune:'<svg viewBox="0 0 64 64"><path d="M32 4l22 12v32L32 60 10 48V16Z" fill="url(#gk)" stroke="#9fb4d8" stroke-width="2.5"/><path d="M26 18v28M26 24l14 8-14 8" stroke="#7ef3ff" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round" fill="none" style="filter:drop-shadow(0 0 5px #3df)"/></svg>',wild:'<svg viewBox="0 0 64 64"><circle cx="32" cy="32" r="30" fill="url(#gw)"/><path d="M32 4l15 38H17Z" fill="url(#gp)" stroke="#ffd36a" stroke-width="2"/><ellipse cx="32" cy="44" rx="25" ry="7" fill="#3b1a7a" stroke="#ffd36a" stroke-width="2"/><path d="M19 38q13 5 26 0v4q-13 5-26 0Z" fill="url(#gg)"/><path d="M32 14l2.4 5 5.4.6-4 3.8 1 5.4-4.8-2.7-4.8 2.7 1-5.4-4-3.8 5.4-.6Z" fill="url(#gg)"/><text x="32" y="61" font-size="11" font-weight="900" text-anchor="middle" fill="#ffe27a" stroke="#2a1060" stroke-width="3" paint-order="stroke" font-family="Georgia,serif">WILD</text></svg>',key:'<svg viewBox="0 0 64 64"><circle cx="22" cy="22" r="14" fill="none" stroke="url(#gg)" stroke-width="7"/><circle cx="22" cy="22" r="5" fill="#7ef3ff"/><path d="M32 32l24 24M44 44l7-7M50 50l6-6" stroke="url(#gg)" stroke-width="7" stroke-linecap="round" fill="none"/></svg>',gem:'<svg viewBox="0 0 64 64"><path d="M32 4l20 14-8 38H20L12 18Z" fill="url(#go)" stroke="#9fe8ff" stroke-width="2"/><path d="M12 18h40M32 4l-8 14 8 38 8-38Z" fill="none" stroke="#e8ffff" stroke-opacity=".6" stroke-width="1.5"/></svg>',scat:'<svg viewBox="0 0 64 64"><path d="M32 0l5 14H27ZM8 10l13 8-4 4ZM56 10L43 18l4 4Z" fill="#ffe27a" fill-opacity=".85"/><path d="M8 30a24 14 0 0 1 48 0Z" fill="url(#gb)" stroke="#ffd36a" stroke-width="2.5"/><rect x="8" y="30" width="48" height="22" rx="3" fill="url(#gb)" stroke="#ffd36a" stroke-width="2.5"/><path d="M8 38h48" stroke="#ffd36a" stroke-width="3"/><rect x="27" y="33" width="10" height="12" rx="2" fill="url(#gg)" stroke="#6b430a"/><text x="32" y="62" font-size="10" font-weight="900" text-anchor="middle" fill="#ffe27a" stroke="#2a1060" stroke-width="3" paint-order="stroke" font-family="Georgia,serif">BONUS</text></svg>'};
 const NAME0=0;const NAME={drag:'Dragon Egg',orb:'Crystal Orb',sword:'Moon Blade',potion:'Elixir',book:'Spellbook',rune:'Rune Stone',wild:'Wizard',scat:'Treasure'};
-const WT={rune:22,book:20,potion:18,sword:13,orb:9,drag:6,wild:2,scat:5};            // reel weights (tune RTP here)
-const PAY={drag:[20,100,500],orb:[10,50,200],sword:[6,25,100],potion:[3,12,50],book:[2,10,40],rune:[1,6,20]}; // x line bet for 3/4/5
+const WT={rune:22,book:20,potion:18,sword:13,orb:9,drag:6,wild:3,scat:5};            // reel weights (tune RTP here)
+const PAY={drag:[15,75,400],orb:[7,35,140],sword:[4,18,70],potion:[2,10,40],book:[2,8,30],rune:[1,4,15]}; // x line bet for 3/4/5
 const LN=[[1,1,1,1,1],[0,0,0,0,0],[2,2,2,2,2],[0,1,2,1,0],[2,1,0,1,2],[0,0,1,0,0],[2,2,1,2,2],[1,0,0,0,1],[1,2,2,2,1],[0,1,1,1,0],[2,1,1,1,2],[1,0,1,0,1],[1,2,1,2,1],[0,1,0,1,0],[2,1,2,1,2],[1,1,0,1,1],[1,1,2,1,1],[0,0,2,0,0],[2,2,0,2,2],[0,2,2,2,0]];
 const BETS=[1,2,5,10,20,50,100],LINES=[1,3,5,10,15,20],JP0=50000; // BETS = bet per line
 let st={bal:10000,bi:1,lines:10,jp:JP0,meter:0,streak:0,last:''};
 try{Object.assign(st,JSON.parse(localStorage.getItem('gs7')||'{}'))}catch(e){}
 const save=()=>{try{localStorage.setItem('gs7',JSON.stringify(st))}catch(e){}};
 const t0=Date.now(),bal0=st.bal;
+const FORCE=new URLSearchParams(location.search).get('force')||'';
 let busy=false,slam=false,auto=false,turbo=false,fs=0,fsWin=0,mute=false,cyc=0,grid,reels=[];
 function pick(r){let L=Object.keys(WT).filter(k=>k!=='wild'||(r>0&&r<4)),t=L.reduce((a,k)=>a+WT[k],0),x=Math.random()*t;for(const k of L){if((x-=WT[k])<0)return k}return'rune'}
 const cellsHTML=a=>a.map(k=>`<div class="sym" data-k="${k}">${SYM[k]}</div>`).join('');
@@ -148,6 +153,7 @@ grid.forEach((g,i)=>{const r=document.createElement('div');r.className='reel';r.
 const NS='http://www.w3.org/2000/svg',lsv=document.createElementNS(NS,'svg'),LC=['#ffd36a','#7ef3ff','#ff7ad9','#9dff7a','#ff9a5a'];
 lsv.id='lsv';lsv.setAttribute('viewBox','0 0 500 300');lsv.setAttribute('preserveAspectRatio','none');$('#win').appendChild(lsv);
 function drawL(a,ms){lsv.innerHTML=a.filter(x=>x!=null).map(li=>`<polyline points="${LN[li].map((r,c)=>`${c*100+50},${r*100+50}`).join(' ')}" fill="none" stroke="${LC[li%5]}" stroke-width="5" stroke-linejoin="round" vector-effect="non-scaling-stroke"/>`).join('');if(ms)setTimeout(()=>{if(!busy)lsv.innerHTML=''},ms)}
+function banner(t){const b=$('#ban');b.textContent=t;b.classList.remove('on');void b.offsetWidth;b.classList.add('on')}
 const allL=()=>[...Array(st.lines).keys()];
 /* ---- sound ---- */
 let AC;function snd(f,d=.1,t='sine',v=.12,at=0,f2){if(mute)return;try{AC=AC||new(window.AudioContext||webkitAudioContext)();const o=AC.createOscillator(),g=AC.createGain(),n=AC.currentTime+at;o.type=t;o.frequency.setValueAtTime(f,n);if(f2)o.frequency.exponentialRampToValueAtTime(f2,n+d);g.gain.setValueAtTime(v,n);g.gain.exponentialRampToValueAtTime(.001,n+d);o.connect(g);g.connect(AC.destination);o.start(n);o.stop(n+d)}catch(e){}}
@@ -232,15 +238,15 @@ async function spin(){
  await AC?.resume?.();const lb=BETS[st.bi],nl=st.lines,bet=lb*nl,free=fs>0;
  if(free)fs--;else{if(st.bal<bet){auto=false;sync();return refill()}st.bal-=bet;st.jp+=Math.ceil(bet*.03)}
  busy=true;slam=false;clearWin();$('#w').textContent='0';$('#msg').textContent=free?'Free spin…':'Good luck!';sync();snd(300,.25,'sawtooth',.06,0,900);
- const fin=[0,1,2,3,4].map(i=>[pick(i),pick(i),pick(i)]);let sc=0,anyAnt=false;
+ const fin=[0,1,2,3,4].map(i=>[pick(i),pick(i),pick(i)]);if(FORCE.includes('wild'))fin[1+(Math.random()*3|0)][0]='wild';let sc=0,anyAnt=false;
  await Promise.all(fin.map((f,i)=>{const ant=!turbo&&sc>=2&&i>=2;anyAnt=anyAnt||ant;sc+=f.filter(k=>k==='scat').length;
   return spinReel(i,f,i*(turbo?40:110),(turbo?420:850)+i*(turbo?90:240)+(ant?(i-1)*500:0),ant)}));
  grid=fin;let g=fin.map(c=>[...c]);
  const setC=(c,r,k)=>{const e=cell(c,r);e.dataset.k=k;e.innerHTML=SYM[k];e.classList.remove('pop');void e.offsetWidth;e.classList.add('pop')};
- if(Math.random()<.04){const low=['rune','book','potion'].filter(k=>g.flat().includes(k));if(low.length){const from=low[Math.random()*low.length|0],to=['sword','orb'][Math.random()*2|0];
-  g.forEach((col,c)=>col.forEach((k,r)=>{if(k===from){g[c][r]=to;setC(c,r,to)}}));$('#msg').textContent=`ARCANE SURGE! ${NAME[from]}s become ${NAME[to]}s`;snd(400,.5,'sawtooth',.1,0,1600);await sleep(turbo?500:1000)}}
- let ex=false;for(let c=1;c<4;c++)if(g[c].includes('wild')&&g[c].some(k=>k!=='wild')){ex=true;for(let r=0;r<3;r++){g[c][r]='wild';setC(c,r,'wild')}}
- if(ex){$('#msg').textContent='The Wizard expands!';snd(500,.4,'triangle',.12,0,1500);await sleep(turbo?400:800)}
+ if(FORCE.includes('surge')||Math.random()<.06){const low=['rune','book','potion'].filter(k=>g.flat().includes(k));if(low.length){const from=low[Math.random()*low.length|0],to=['sword','orb'][Math.random()*2|0];
+  g.forEach((col,c)=>col.forEach((k,r)=>{if(k===from){g[c][r]=to;setC(c,r,to)}}));$('#msg').textContent=`ARCANE SURGE! ${NAME[from]}s become ${NAME[to]}s`;banner('ARCANE SURGE');snd(400,.5,'sawtooth',.1,0,1600);await sleep(turbo?700:1400)}}
+ let ex=false;const exr=[];for(let c=1;c<4;c++)if(g[c].includes('wild')&&g[c].some(k=>k!=='wild')){ex=true;exr.push(c);for(let r=0;r<3;r++){g[c][r]='wild';setC(c,r,'wild')}}
+ if(ex){$('#msg').textContent='The Wizard expands!';exr.forEach(c=>reels[c].classList.add('wx'));banner('WIZARD EXPANDS');snd(500,.4,'triangle',.12,0,1500);await sleep(turbo?700:1300);exr.forEach(c=>reels[c].classList.remove('wx'))}
  grid=g;let tot=0,mult=1,steps=0,jp=false,sc0=0;
  for(;;){
   const ev=evalGrid(g,lb,nl,free,bet);if(!steps)sc0=ev.sc;
@@ -290,6 +296,7 @@ $('#bp').onclick=()=>{if(!busy&&st.bi<BETS.length-1){st.bi++;snd(700,.05,'square
 $('#bm').onclick=()=>{if(!busy&&st.bi>0){st.bi--;snd(500,.05,'square',.05);sync()}};
 $('#max').onclick=()=>{if(!busy){st.bi=BETS.length-1;st.lines=20;snd(900,.1,'square',.06);sync();flash()}};
 $('#show').onclick=()=>{if(!busy)drawL(allL(),1800)};
+$('#inf').onclick=()=>{if(!busy)ov(`<div class="bt" style="font-size:34px">FEATURES</div><p style="text-align:left;max-width:340px;line-height:1.55"><b>Wizard Wild</b> (reels 2-4) expands to fill its whole reel. Roughly 1 spin in 4.<br><b>Arcane Surge</b> turns weak symbols into Moon Blades or Crystal Orbs. About 1 spin in 17.<br><b>Cascades</b>: winning symbols vanish, new ones fall, multiplier up to ×4.<br><b>Treasure chests</b> fill the vault meter, then you pick a key at the Guardian's Gate.<br><b>Vault</b>: treasures lock while the rest spin.</p>`,'Got it')};
 $('#mtr').onclick=()=>{if(!busy)ov(`<div class="bt">TREASURE VAULT</div><p>Every Treasure chest that lands anywhere on the reels fills one gem.<br>Fill all ${MTR} to open the vault: treasures lock in place while the rest spin, and every spin locks more.</p>`,'Got it')};
 addEventListener('keydown',e=>{if(e.code==='Space'){e.preventDefault();spin()}});
 setInterval(()=>{if(!busy){st.jp+=Math.ceil(Math.random()*3);$('#jp').textContent=fmt(st.jp)}},1500);
